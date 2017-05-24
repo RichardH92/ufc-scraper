@@ -7,6 +7,8 @@ def parse_sherdog_page(html):
 	fighter = parse_bio(html, fighter)
 	fighter = parse_fight_stats(html, fighter)
 
+	fighter['fights'] = parse_fights(html)
+
 	print(fighter)
 
 def parse_bio(html, fighter):
@@ -74,3 +76,30 @@ def parse_loss_stats(html):
 	losses['others'] = losses_oth[:losses_oth.find(' ')]
 
 	return losses
+
+def parse_fights(html):
+
+	fights = []
+	soup = BeautifulSoup(html, 'html.parser')
+
+	even_fights = soup.find('div', class_='content table').find_all('tr', class_='even')
+	for fight in even_fights:
+
+		fight_dict = {}
+		fight_dict['result'] = fight.find_all('td')[0].get_text()
+		fight_dict['opponent_name'] = fight.find_all('td')[1].get_text()
+		
+		fights.insert(0, fight_dict)
+
+	odd_fights = soup.find('div', class_='content table').find_all('tr', class_='odd')
+	for fight in even_fights:
+
+		fight_dict = {}
+		fight_dict['result'] = fight.find_all('td')[0].get_text()
+		fight_dict['opponent_name'] = fight.find_all('td')[1].get_text()
+		
+		fights.insert(0, fight_dict)
+
+	return fights
+
+
