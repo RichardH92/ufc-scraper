@@ -5,7 +5,7 @@ def parse_sherdog_page(html):
 	fighter = {}
 
 	fighter = parse_bio(html, fighter)
-	fighter = parse_win_stats(html, fighter)
+	fighter = parse_fight_stats(html, fighter)
 
 	print(fighter)
 
@@ -21,24 +21,38 @@ def parse_bio(html, fighter):
 	fighter['height'] = soup.find('span', class_='item height').find('strong').get_text()
 	fighter['weight'] = soup.find('span', class_='item weight').find('strong').get_text()
 	fighter['weight_class'] = soup.find('h6', class_='item wclass').find('strong').get_text()
-
-	#TODO: Substr this
-	fighter['age'] = soup.find('span', class_='item birthday').find('strong').get_text()
+	fighter['age'] = soup.find('span', class_='item birthday').find('strong').get_text()[5:]
 
 	return fighter
 
 def parse_fight_stats(html, fighter):
 
-	fighter = parse_win_stats(html, fighter)
-	fighter = parse_loss_stats(html, fighter)
+	fighter['wins'] = parse_win_stats(html)
+	fighter['losses'] = parse_loss_stats(html)
 
 	return fighter
 
-def parse_win_stats(html, fighter):
+def parse_win_stats(html):
+	soup = BeautifulSoup(html, 'html.parser')
+	wins = {}
 
-	return fighter
+	wins['total'] = soup.find('div', class_='left_side').find('span', class_='counter').get_text()
+	
+	wins_ko = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[0].get_text()
+	wins['knockouts'] = wins_ko[:wins_ko.find(' ')]
+
+	wins_sub = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[1].get_text()
+	wins['submissions'] = wins_sub[:wins_sub.find(' ')]
+
+	wins_dec = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[2].get_text()
+	wins['decisions'] = wins_dec[:wins_dec.find(' ')]
+
+	wins_oth = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[3].get_text()
+	wins['others'] = wins_oth[:wins_oth.find(' ')]
+
+	return wins
 
 
-def parse_loss_stats(html, fighter):
+def parse_loss_stats(html):
 
 	return fighter
