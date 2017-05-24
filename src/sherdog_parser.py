@@ -26,9 +26,11 @@ def parse_bio(html, fighter):
 	return fighter
 
 def parse_fight_stats(html, fighter):
+	soup = BeautifulSoup(html, 'html.parser')
 
 	fighter['wins'] = parse_win_stats(html)
 	fighter['losses'] = parse_loss_stats(html)
+	fighter['no_contests'] = soup.find('div', class_='right_side').find('span', class_='counter').get_text()
 
 	return fighter
 
@@ -54,5 +56,21 @@ def parse_win_stats(html):
 
 
 def parse_loss_stats(html):
+	soup = BeautifulSoup(html, 'html.parser')
+	losses = {}
 
-	return fighter
+	losses['total'] = soup.find('div', class_='bio_graph loser').find('span', class_='counter').get_text()
+	
+	losses_ko = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[4].get_text()
+	losses['knockouts'] = losses_ko[:losses_ko.find(' ')]
+
+	losses_sub = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[5].get_text()
+	losses['submissions'] = losses_sub[:losses_sub.find(' ')]
+
+	losses_dec = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[6].get_text()
+	losses['decisions'] = losses_dec[:losses_dec.find(' ')]
+
+	losses_oth = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[7].get_text()
+	losses['others'] = losses_oth[:losses_oth.find(' ')]
+
+	return losses
