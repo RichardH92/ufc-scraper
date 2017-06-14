@@ -1,6 +1,6 @@
 import io
 import pycurl
-import sherdog_parser
+import ufc_parser
 
 def scrape_url(url, socks_port, fighter):
 	output = io.BytesIO()
@@ -15,6 +15,6 @@ def scrape_url(url, socks_port, fighter):
 	try:
 		query.perform()
 		html = output.getvalue()
-		return sherdog_parser.parse_sherdog_page(html, fighter)
+		return ufc_parser.parse_ufc_page(html, fighter)
 	except pycurl.error as exc:
 		return "Unable to reach %s (%s)" % (url, exc)

@@ -1,9 +1,7 @@
 
 from bs4 import BeautifulSoup
 
-def parse_sherdog_page(html):
-	fighter = {}
-
+def parse_sherdog_page(html, fighter):
 	fighter = parse_bio(html, fighter)
 	fighter = parse_fight_stats(html, fighter)
 
