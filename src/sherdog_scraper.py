@@ -7,9 +7,9 @@ def scrape_url(url, socks_port, fighter):
 
 	query = pycurl.Curl()
 	query.setopt(pycurl.URL, url)
-	#query.setopt(pycurl.PROXY, 'localhost')
-	#query.setopt(pycurl.PROXYPORT, socks_port)
-	#query.setopt(pycurl.PROXYTYPE, pycurl.PROXYTYPE_SOCKS5_HOSTNAME)
+	query.setopt(pycurl.PROXY, 'localhost')
+	query.setopt(pycurl.PROXYPORT, socks_port)
+	query.setopt(pycurl.PROXYTYPE, pycurl.PROXYTYPE_SOCKS5_HOSTNAME)
 	query.setopt(pycurl.WRITEFUNCTION, output.write)
 
 	try:

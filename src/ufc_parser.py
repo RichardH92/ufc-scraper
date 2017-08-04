@@ -5,8 +5,6 @@ def parse_ufc_page(html, fighter):
 	fighter['strikes'] = parse_striking_metrics(html)
 	fighter['takedowns'] = parse_grappling_metrics(html)
 
-	print(fighter)
-
 	return
 
 def parse_striking_metrics(html):

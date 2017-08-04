@@ -7,8 +7,6 @@ def parse_sherdog_page(html, fighter):
 
 	fighter['fights'] = parse_fights(html)
 
-	print(fighter)
-
 def parse_bio(html, fighter):
 	soup = BeautifulSoup(html, 'html.parser')
 
@@ -30,7 +28,11 @@ def parse_fight_stats(html, fighter):
 
 	fighter['wins'] = parse_win_stats(html)
 	fighter['losses'] = parse_loss_stats(html)
-	fighter['no_contests'] = soup.find('div', class_='right_side').find('span', class_='counter').get_text()
+
+	try:
+		fighter['no_contests'] = soup.find('div', class_='right_side').find('span', class_='counter').get_text()
+	except (AttributeError):
+		fighter['no_contests'] = 0
 
 	return fighter
 
@@ -40,17 +42,20 @@ def parse_win_stats(html):
 
 	wins['total'] = soup.find('div', class_='left_side').find('span', class_='counter').get_text()
 	
-	wins_ko = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[0].get_text()
+	wins_ko = soup.find('div', class_='bio_graph').find_all('span', class_='graph_tag')[0].get_text()
 	wins['knockouts'] = wins_ko[:wins_ko.find(' ')]
 
-	wins_sub = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[1].get_text()
+	wins_sub = soup.find('div', class_='bio_graph').find_all('span', class_='graph_tag')[1].get_text()
 	wins['submissions'] = wins_sub[:wins_sub.find(' ')]
 
-	wins_dec = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[2].get_text()
+	wins_dec = soup.find('div', class_='bio_graph').find_all('span', class_='graph_tag')[2].get_text()
 	wins['decisions'] = wins_dec[:wins_dec.find(' ')]
 
-	wins_oth = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[3].get_text()
-	wins['others'] = wins_oth[:wins_oth.find(' ')]
+	try:
+		wins_oth = soup.find('div', class_='bio_graph').find_all('span', class_='graph_tag')[3].get_text()
+		wins['others'] = wins_oth[:wins_oth.find(' ')]
+	except (IndexError):
+		wins['others'] = 0
 
 	return wins
 
@@ -61,17 +66,20 @@ def parse_loss_stats(html):
 
 	losses['total'] = soup.find('div', class_='bio_graph loser').find('span', class_='counter').get_text()
 	
-	losses_ko = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[4].get_text()
+	losses_ko = soup.find('div', class_='bio_graph loser').find_all('span', class_='graph_tag')[0].get_text()
 	losses['knockouts'] = losses_ko[:losses_ko.find(' ')]
 
-	losses_sub = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[5].get_text()
+	losses_sub = soup.find('div', class_='bio_graph loser').find_all('span', class_='graph_tag')[1].get_text()
 	losses['submissions'] = losses_sub[:losses_sub.find(' ')]
 
-	losses_dec = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[6].get_text()
+	losses_dec = soup.find('div', class_='bio_graph loser').find_all('span', class_='graph_tag')[2].get_text()
 	losses['decisions'] = losses_dec[:losses_dec.find(' ')]
 
-	losses_oth = soup.find('div', class_='left_side').find_all('span', class_='graph_tag')[7].get_text()
-	losses['others'] = losses_oth[:losses_oth.find(' ')]
+	try:
+		losses_oth = soup.find('div', class_='bio_graph loser').find_all('span', class_='graph_tag')[3].get_text()
+		losses['others'] = losses_oth[:losses_oth.find(' ')]
+	except (IndexError):
+		losses['others'] = 0
 
 	return losses
 
